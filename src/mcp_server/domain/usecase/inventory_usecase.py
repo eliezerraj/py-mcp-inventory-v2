@@ -31,14 +31,35 @@ class InventoryUseCase:
 
         return response    
  
-    async def post_product(self, sku):
-        logger.info(f"Creating product for sku: {sku}")
+    async def post_product(self, payload: dict):
+        logger.info(f"Creating product: {payload}")
         
         try:
-            response = await self.inventory_adapter.post_product(sku)
+            response = await self.inventory_adapter.post_product(payload)
         except Exception as e:
-            logger.error(f"Error creating product for sku {sku}: {e}")
+            logger.error(f"Error creating product for sku {payload.get('sku')}: {e}")
             response = {"message": e}
 
         return response   
+
+    async def put_product(self, sku, payload: dict):
+        logger.info(f"Updating product for sku {sku} with payload: {payload}")
         
+        try:
+            response = await self.inventory_adapter.put_product(sku, payload)
+        except Exception as e:
+            logger.error(f"Error updating product for sku {sku} with payload {payload}: {e}")
+            response = {"message": e}
+
+        return response
+    
+    async def patch_product(self, sku, payload: dict):
+        logger.info(f"Patching product for sku {sku} with payload: {payload}")
+        
+        try:
+            response = await self.inventory_adapter.patch_product(sku, payload)
+        except Exception as e:
+            logger.error(f"Error patching product for sku {sku} with payload {payload}: {e}")
+            response = {"message": e}
+
+        return response   

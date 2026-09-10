@@ -28,7 +28,9 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         auth_token = None
         if auth_header and auth_header.startswith("Bearer "):
             auth_token = auth_header.split(" ", 1)[1]
-            
+        
+        logger.info(f"Setting Request ID {request_id} and auth_token in context: {auth_token}")
+        
         REQUEST_ID_CTX.set(request_id)
         
         sec_context = SecurityContext(
@@ -36,7 +38,6 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
             auth_token=auth_token,
         )
         
-        #request.state.security_context = sec_context
         set_security_context(sec_context)
         
         try:
