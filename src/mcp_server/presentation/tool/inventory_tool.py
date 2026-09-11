@@ -88,12 +88,12 @@ def register_inventory_tool(mcp: "MCPServer", inventory_use_case: InventoryUseCa
         - initial inventory quantity
         """
         
-        logger.info(f"Updating product for sku {payload.sku} with payload: {payload}")
+        logger.info(f"Updating product with payload: {payload}")
         
         try:
-            response = await inventory_use_case.put_product(payload.sku, payload.model_dump()) 
+            response = await inventory_use_case.put_product(payload.model_dump()) 
         except Exception as e:
-            logger.error(f"Error updating product for sku {payload.sku} with payload {payload}: {e}")
+            logger.error(f"Error updating product with payload {payload}: {e}")
             response = {"message": e}
         
         return response
@@ -113,12 +113,12 @@ def register_inventory_tool(mcp: "MCPServer", inventory_use_case: InventoryUseCa
         - inventory pending
         """
         
-        logger.info(f"Patching product for sku {payload.sku} with payload: {payload}")
+        logger.info(f"Patching product with payload: {payload}")
         
         try:
-            response = await inventory_use_case.patch_product(payload.sku, payload.model_dump()) 
+            response = await inventory_use_case.patch_product(payload.model_dump()) 
         except Exception as e:
-            logger.error(f"Error patching product for sku {payload.sku} with payload {payload}: {e}")
+            logger.error(f"Error patching product with payload {payload}: {e}")
             response = {"message": e}
         
         return response

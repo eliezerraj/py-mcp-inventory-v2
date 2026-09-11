@@ -20,7 +20,7 @@ python -m app.main
 
 ## run mcp inspector
 ```sh
-# Session 1 (venv activated and NO EXPORT env)
+# Session 1
 npx @modelcontextprotocol/inspector
 
 # Sesssion 2 (venv activated)
