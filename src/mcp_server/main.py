@@ -12,7 +12,7 @@ import uvicorn
 from contextlib import asynccontextmanager
 from opentelemetry import trace
 
-from src.mcp_server.infrastructure.adapter.http_inventory import HttpAdapterInventory
+from src.mcp_server.infrastructure.adapter.http import HttpAdapter
 from src.mcp_server.infrastructure.middleware.middleware import RequestContextMiddleware
 
 from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
@@ -51,10 +51,10 @@ async def server_lifespan(app):
         ) as http_client:
         
             # Initialize inventory adapter with the inventory service URL
-            inventory_adapter = HttpAdapterInventory(settings.INVENTORY_URL)
+            http_adapter = HttpAdapter(settings.INVENTORY_URL)
             
             # Initialize inventory use case
-            inventory_usecase = InventoryUseCase(inventory_adapter)
+            inventory_usecase = InventoryUseCase(http_adapter)
             
             # Register inventory tool with the MCP server
             register_inventory_tool(mcp, inventory_usecase)
@@ -86,10 +86,6 @@ def run():
                     host=settings.HOST, 
                     port=int(settings.PORT))
         
-        #mcp.run(transport="streamable-http",
-        #         host=settings.HOST,
-        #         port=int(settings.PORT),
-        # )
     except Exception as e:
         logger.error(f"Server encountered an error: {e}")
         sys.exit(1)

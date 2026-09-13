@@ -3,11 +3,13 @@
 
 ### create venv
 ```sh
+# run only if the env not exists
 python3 -m venv .venv
 ```
 ### activate
 ```sh
-source .venv/bin/activate
+# env installed 2 folder above
+source ../../.venv/bin/activate
 ```
 ### install dependecies
 ```sh
@@ -20,7 +22,7 @@ python -m app.main
 
 ## run mcp inspector
 ```sh
-# Session 1 (venv activated and NO EXPORT env)
+# Session 1
 npx @modelcontextprotocol/inspector
 
 # Sesssion 2 (venv activated)
