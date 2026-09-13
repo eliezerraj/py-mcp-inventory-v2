@@ -3,11 +3,13 @@
 
 ### create venv
 ```sh
+# run only if the env not exists
 python3 -m venv .venv
 ```
 ### activate
 ```sh
-source .venv/bin/activate
+# env installed 2 folder above
+source ../../.venv/bin/activate
 ```
 ### install dependecies
 ```sh
