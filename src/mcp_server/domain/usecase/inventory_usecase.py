@@ -9,8 +9,8 @@ class InventoryUseCase:
         logger.info("InventoryUseCase initialized SUCCESSFULLY.")
         self.http_adapter = http_adapter
             
-    async def get_inventory_info(self):
-        logger.info(f"Fetching inventory info asynchronously")
+    async def get_inventory_service_info(self):
+        logger.info(f"Fetching inventory service info asynchronously")
         
         try:
             response = await self.http_adapter.request(
