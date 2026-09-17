@@ -14,7 +14,6 @@ from src.mcp_server.infrastructure.middleware.middleware import RequestContextMi
 from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
 
 from src.mcp_server.presentation.tool.inventory_tool import register_inventory_tool
-from src.mcp_server.presentation.tool.info_tool import register_info_tool
 
 from src.mcp_server.infrastructure.telemetry.tracer import setup_tracer
 
@@ -22,6 +21,12 @@ from src.mcp_server.config.logger import setup_logger
 from src.mcp_server.config.settings import settings
 
 from mcp.server.mcpserver import MCPServer
+
+from src.mcp_server.presentation.prompt.inventory_prompt import (
+    register_prompt,
+)
+
+from src.mcp_server.presentation.resource.inventory_resource import register_inventory_resource
 
 setup_logger(settings.LOG_LEVEL, 
              settings.APP_NAME, 
@@ -54,7 +59,12 @@ async def server_lifespan(app):
             
             # Register inventory tool with the MCP server
             register_inventory_tool(mcp, inventory_usecase)
-            register_info_tool(mcp)
+            
+            # Register prompt
+            register_prompt(mcp)
+            
+            # Register resource
+            register_inventory_resource(mcp, inventory_usecase)
         
         yield
     finally:

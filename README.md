@@ -94,3 +94,18 @@ mcp-enterprise-server/
     ├── integration/               # Tests clients with mock servers (WireMock/respx)
     └── e2e/                       # Tests full MCP JSON-RPC protocol roundtrips
 ```
+
+```
+                    MCP
+                     │
+       ┌─────────────┼─────────────┐
+       │             │             │
+     Tools        Resources      Prompts
+       │             │             │
+       ▼             ▼             ▼
+   Actions         Context       Workflow
+       │             │             │
+       ▼             ▼             ▼
+Inventory       Inventory      Inventory
+UseCase           Data          Analysis
+```
