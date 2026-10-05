@@ -1,10 +1,12 @@
 import logging
-
+from src.mcp_server.domain.dto.apperrs import AppError
+from opentelemetry import trace
 from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
 
 from src.mcp_server.config.settings import settings
 
 logger = logging.getLogger(__name__)
+tracer = trace.get_tracer(__name__)
 
 def register_inventory_resource(mcp: "MCPServer", inventory_use_case: InventoryUseCase):
     logger.info("Registering inventory resource SUCCESSFULLY.")
@@ -26,13 +28,15 @@ def register_inventory_resource(mcp: "MCPServer", inventory_use_case: InventoryU
         Use this resource to get an overview of the inventory service.
         """
         logger.info(f"Fetching inventory service info")
-        
-        try:
-            response = await inventory_use_case.get_inventory_service_info() 
-        except Exception as e:
-            logger.error(f"Error fetching inventory service info: {e}")
-            response = {"message": e}
-        
+        with tracer.start_as_current_span("resource.get_inventory_service_info"):
+            try:
+                response = await inventory_use_case.get_inventory_service_info()
+            except AppError as e:
+                return e.to_dict() 
+            except Exception as e:
+                logger.error(f"Error fetching inventory service info: {e}")
+                response = {"message": str(e)}
+
         return response
     
     @mcp.resource("product://{sku}")
@@ -49,12 +53,15 @@ def register_inventory_resource(mcp: "MCPServer", inventory_use_case: InventoryU
         
         logger.info(f"Fetching product for sku: {sku}")
         
-        try:
-            response = await inventory_use_case.get_product(sku) 
-        except Exception as e:
-            logger.error(f"Error fetching product for sku {sku}: {e}")
-            response = {"message": e}
-        
+        with tracer.start_as_current_span("resource.get_product"):
+            try:
+                response = await inventory_use_case.get_product(sku)
+            except AppError as e:
+                return e.to_dict() 
+            except Exception as e:
+                logger.error(f"Error fetching product for sku {sku}: {e}")
+                response = {"message": str(e)}
+
         return response
     
     return get_inventory_service_info, get_product, mcp_info
