@@ -1,8 +1,9 @@
 import logging
-from src.mcp_server.domain.dto.apperrs import AppError
-from opentelemetry import trace
-from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
 
+from opentelemetry import trace
+
+from src.mcp_server.domain.dto.apperrs import AppError
+from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
 from src.mcp_server.config.settings import settings
 
 logger = logging.getLogger(__name__)

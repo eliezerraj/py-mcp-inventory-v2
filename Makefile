@@ -9,7 +9,7 @@ export SESSION_TIMEOUT=700
 
 export INVENTORY_URL=http://localhost:7000
 
-export LOG_LEVEL=INFO
+export LOG_LEVEL=WARNING
 export OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317
 export OTEL_STDOUT_LOG_GROUP=True
 export LOG_GROUP=/mnt/c/Eliezer/log/py-mcp-inventory-v2.log

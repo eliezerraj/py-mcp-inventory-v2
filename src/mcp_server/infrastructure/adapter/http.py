@@ -9,6 +9,9 @@ from src.mcp_server.infrastructure.context.request_context import (
     get_security_context,
 )
 
+#---------------------------------
+# Configure logging
+#---------------------------------
 tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
 

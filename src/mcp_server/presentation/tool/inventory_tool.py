@@ -1,5 +1,7 @@
 import logging
+
 from opentelemetry import trace
+
 from src.mcp_server.domain.dto.context import SecurityContext
 from src.mcp_server.domain.dto.product import ProductPayload
 from src.mcp_server.domain.dto.product import PatchInventoryPayload
