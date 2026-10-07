@@ -2,7 +2,7 @@ import logging
 
 from mcp.server.fastmcp import FastMCP
 
-from mcp_server.presentation.prompt.templates.inventory_prompt_templates import (
+from src.mcp_server.presentation.prompt.templates.inventory_prompt_templates import (
     INFORMATION_OVERVIEW_PROMPT,
 )
 

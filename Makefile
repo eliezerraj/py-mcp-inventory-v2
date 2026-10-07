@@ -1,6 +1,6 @@
 # Define environment variables
 
-export VERSION=0.1
+export VERSION=1.0
 export ACCOUNT=local:localhost
 export APP_NAME=py-mcp-inventory-v2
 export HOST=127.0.0.1
@@ -8,6 +8,9 @@ export PORT=7500
 export SESSION_TIMEOUT=700
 
 export INVENTORY_URL=http://localhost:7000
+
+export METRICS_HOST=127.0.0.1
+export METRICS_PORT=8500
 
 export LOG_LEVEL=INFO
 export OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317
@@ -22,8 +25,15 @@ all: env activate run
 env:
 	@echo "Current Environment Variables:"
 	@echo "VERSION=$(VERSION)"
+	@echo "ACCOUNT=$(ACCOUNT)"
 	@echo "APP_NAME=$(APP_NAME)"
+	@echo "HOST=$(HOST)"
+	@echo "PORT=$(PORT)"
+	@echo "SESSION_TIMEOUT=$(SESSION_TIMEOUT)"	
 	@echo "LOG_LEVEL=$(LOG_LEVEL)"
+	@echo "INVENTORY_URL=$(INVENTORY_URL)"
+	@echo "METRICS_HOST=$(METRICS_HOST)"
+	@echo "METRICS_PORT=$(METRICS_PORT)"
 activate:
 	@echo "Activate venv..."
 	@bash -c "source ../../.venv/bin/activate"
@@ -33,4 +43,4 @@ run:
 	@echo "Running application with environment variables..."
 	@bash -c "source ../../.venv/bin/activate && python -m src.mcp_server.main"
     
-.PHONY: all env run
+.PHONY: all env activate run
