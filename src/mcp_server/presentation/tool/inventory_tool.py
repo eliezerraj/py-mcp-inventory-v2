@@ -1,7 +1,9 @@
 import logging
+import time
 
 from opentelemetry import trace
 
+from src.mcp_server.infrastructure.telemetry.metric import TOOL_CALLS, ACTIVE_REQUESTS, TOOL_DURATION, TOOL_ERRORS
 from src.mcp_server.domain.dto.context import SecurityContext
 from src.mcp_server.domain.dto.product import ProductPayload
 from src.mcp_server.domain.dto.product import PatchInventoryPayload
@@ -30,17 +32,25 @@ def register_inventory_tool(mcp: "MCPServer", inventory_use_case: InventoryUseCa
         - price with currency and amount
         - initial inventory quantity
         """
-        
         logger.info(f"Creating product: {payload}")
-        
+                
         with tracer.start_as_current_span("tool.post_product"):
+            
+            ACTIVE_REQUESTS.inc()
+            start_time = time.perf_counter()
+        
             try:
-                response = await inventory_use_case.post_product(payload.model_dump()) 
+                response = await inventory_use_case.post_product(payload.model_dump())
+                TOOL_CALLS.labels(tool="post_product").inc()
             except Exception as e:
                 logger.error(f"Error creating product for sku {payload.sku}: {e}")
-                response = {"message": e}
+                TOOL_ERRORS.labels(tool="post_product").inc()
+                response = {"message": str(e)}
+            finally:
+                TOOL_DURATION.labels(tool="post_product").observe(time.perf_counter() - start_time)
+                ACTIVE_REQUESTS.dec()
         
-        return response
+            return response
 
     @mcp.tool()
     async def put_product(payload: ProductPayload):
@@ -59,17 +69,24 @@ def register_inventory_tool(mcp: "MCPServer", inventory_use_case: InventoryUseCa
         - price with currency and amount
         - initial inventory quantity
         """
-        
         logger.info(f"Updating product with payload: {payload}")
-        
+                        
         with tracer.start_as_current_span("tool.put_product"):
+            ACTIVE_REQUESTS.inc()
+            start_time = time.perf_counter()
+        
             try:
                 response = await inventory_use_case.put_product(payload.model_dump()) 
+                TOOL_CALLS.labels(tool="put_product").inc()
             except Exception as e:
                 logger.error(f"Error updating product with payload {payload}: {e}")
-                response = {"message": e}
-        
-        return response
+                TOOL_ERRORS.labels(tool="put_product").inc()
+                response = {"message": str(e)}
+            finally:
+                TOOL_DURATION.labels(tool="put_product").observe(time.perf_counter() - start_time)
+                ACTIVE_REQUESTS.dec()
+
+            return response
 
     @mcp.tool()
     async def patch_product(payload: PatchInventoryPayload):
@@ -85,16 +102,23 @@ def register_inventory_tool(mcp: "MCPServer", inventory_use_case: InventoryUseCa
         - inventory sold
         - inventory pending
         """
-        
         logger.info(f"Patching product with payload: {payload}")
-        
+                
         with tracer.start_as_current_span("tool.patch_product"):
+            ACTIVE_REQUESTS.inc()
+            start_time = time.perf_counter()
+            
             try:
                 response = await inventory_use_case.patch_product(payload.model_dump()) 
+                TOOL_CALLS.labels(tool="patch_product").inc()
             except Exception as e:
+                TOOL_ERRORS.labels(tool="patch_product").inc()
                 logger.error(f"Error patching product with payload {payload}: {e}")
-                response = {"message": e}
-        
-        return response
+                response = {"message": str(e)}
+            finally:
+                TOOL_DURATION.labels(tool="patch_product").observe(time.perf_counter() - start_time)
+                ACTIVE_REQUESTS.dec()
+                        
+            return response
         
     return post_product, put_product, patch_product
