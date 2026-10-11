@@ -8,19 +8,18 @@ from threading import Thread
 from contextlib import asynccontextmanager
 from opentelemetry import trace
 
+from prometheus_client import make_asgi_app
+
 from src.mcp_server.infrastructure.adapter.http import HttpAdapter
 from src.mcp_server.infrastructure.middleware.middleware import RequestContextMiddleware
 from src.mcp_server.infrastructure.middleware.middleware_metric import PrometheusMiddleware
 from src.mcp_server.infrastructure.telemetry.tracer import setup_tracer
-
-from prometheus_client import make_asgi_app
-
 from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
 from src.mcp_server.presentation.tool.inventory_tool import register_inventory_tool
-
 from src.mcp_server.config.logger import setup_logger
 from src.mcp_server.config.settings import settings
 
+from mcp.server.transport_security import TransportSecuritySettings
 from mcp.server.mcpserver import MCPServer
 
 from src.mcp_server.presentation.prompt.inventory_prompt import (
@@ -39,6 +38,7 @@ logger = logging.getLogger(__name__)
 # Setup OpenTelemetry tracer
 setup_tracer(settings.APP_NAME, 
              settings.OTEL_EXPORTER_OTLP_ENDPOINT)
+
 tracer = trace.get_tracer(__name__)
     
 @asynccontextmanager
@@ -71,6 +71,21 @@ async def server_lifespan(app):
     finally:
         logger.info("Server shutting down SUCCESSFULLY.")
 
+# Transport security settings for the MCP server
+transport_security = TransportSecuritySettings(
+    enable_dns_rebinding_protection=True,
+    allowed_hosts=[
+        "localhost:*",
+        "127.0.0.1:*",
+        "py-mcp-inventory-v2:*",
+    ],
+    allowed_origins=[
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+        "http://py-mcp-inventory-v2:*",
+    ],
+)
+
 #---------------------------------
 # setup MCP server
 #---------------------------------
@@ -80,7 +95,7 @@ mcp = MCPServer(name=settings.APP_NAME,
 )
 
 # Add middleware to the MCP server application (ASGI compatible)
-mcp_app = mcp.streamable_http_app()
+mcp_app = mcp.streamable_http_app(transport_security=transport_security)
 mcp_app.add_middleware(RequestContextMiddleware)
 mcp_app.add_middleware(PrometheusMiddleware)
 
