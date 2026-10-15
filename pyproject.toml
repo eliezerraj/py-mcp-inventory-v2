@@ -19,4 +19,6 @@ dependencies = [
     "opentelemetry-instrumentation-logging",
     "opentelemetry-exporter-otlp",
     "prometheus-client",
+    "cedarpy",
+    "PyJWT[crypto]",
 ]

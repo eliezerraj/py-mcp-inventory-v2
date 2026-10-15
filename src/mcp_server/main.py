@@ -11,11 +11,12 @@ from opentelemetry import trace
 from prometheus_client import make_asgi_app
 
 from src.mcp_server.infrastructure.adapter.http import HttpAdapter
+from src.mcp_server.presentation.resource.inventory_resource import InventoryResource
 from src.mcp_server.infrastructure.middleware.middleware import RequestContextMiddleware
 from src.mcp_server.infrastructure.middleware.middleware_metric import PrometheusMiddleware
 from src.mcp_server.infrastructure.telemetry.tracer import setup_tracer
 from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
-from src.mcp_server.presentation.tool.inventory_tool import register_inventory_tool
+from src.mcp_server.presentation.tool.inventory_tool import InventoryTool
 from src.mcp_server.config.logger import setup_logger
 from src.mcp_server.config.settings import settings
 
@@ -25,8 +26,6 @@ from mcp.server.mcpserver import MCPServer
 from src.mcp_server.presentation.prompt.inventory_prompt import (
     register_prompt,
 )
-
-from src.mcp_server.presentation.resource.inventory_resource import register_inventory_resource
 
 setup_logger(settings.LOG_LEVEL, 
              settings.APP_NAME, 
@@ -59,13 +58,15 @@ async def server_lifespan(app):
             inventory_usecase = InventoryUseCase(http_adapter)
             
             # Register inventory tool with the MCP server
-            register_inventory_tool(mcp, inventory_usecase)
+            inventory_tool = InventoryTool(mcp, inventory_usecase) 
+            inventory_tool.register_inventory_tool()
             
             # Register prompt
             register_prompt(mcp)
             
             # Register resource
-            register_inventory_resource(mcp, inventory_usecase)
+            inventory_resource = InventoryResource(mcp, inventory_usecase)
+            inventory_resource.register_inventory_resource()
         
         yield
     finally:

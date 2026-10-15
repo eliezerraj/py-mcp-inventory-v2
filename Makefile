@@ -12,11 +12,15 @@ export INVENTORY_URL=http://localhost:7000
 export METRICS_HOST=127.0.0.1
 export METRICS_PORT=8500
 
+export AUTHORIZATION_DRY_RUN=False
+export AUTHORIZATION_JWKS_URL=http://localhost:7100/v1/.well-known/jwks.json
+export AUTHORIZATION_ISSUER=go-authorizer-v2
+export AUTHORIZATION_AUDIENCE=go-ecommerce
+
 export LOG_LEVEL=INFO
 export OTEL_EXPORTER_OTLP_ENDPOINT=localhost:4317
 export OTEL_STDOUT_LOG_GROUP=False
 export LOG_GROUP=/mnt/c/Eliezer/log/py-mcp-inventory-v2.log
-export MCP_VALIDATE_CONTEXT=false
 
 # Default target
 all: env activate run
@@ -31,6 +35,10 @@ env:
 	@echo "PORT=$(PORT)"
 	@echo "SESSION_TIMEOUT=$(SESSION_TIMEOUT)"	
 	@echo "LOG_LEVEL=$(LOG_LEVEL)"
+	@echo "AUTHORIZATION_DRY_RUN=$(AUTHORIZATION_DRY_RUN)"
+	@echo "AUTHORIZATION_JWKS_URL=$(AUTHORIZATION_JWKS_URL)"
+	@echo "AUTHORIZATION_ISSUER=$(AUTHORIZATION_ISSUER)"
+	@echo "AUTHORIZATION_AUDIENCE=$(AUTHORIZATION_AUDIENCE)"
 	@echo "INVENTORY_URL=$(INVENTORY_URL)"
 	@echo "METRICS_HOST=$(METRICS_HOST)"
 	@echo "METRICS_PORT=$(METRICS_PORT)"
