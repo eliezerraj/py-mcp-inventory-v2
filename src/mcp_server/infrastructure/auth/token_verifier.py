@@ -45,7 +45,7 @@ class JwtTokenVerifier:
         
         with tracer.start_as_current_span("jwt.verify_token") as span:
             try:
-                if not token:
+                if not token or token is None:
                     raise MissingTokenError(status_code=401, error="UNAUTHORIZED", error_type="MissingTokenError", message="Missing token")
 
                 claims = await self._verify_signature_and_claims(token)
@@ -66,7 +66,7 @@ class JwtTokenVerifier:
                 
             except jwt.InvalidTokenError as e:
                 logger.warning(f"JWT verification failed: {str(e)}")
-                raise InvalidAccessTokenError(status_code=401, error="UNAUTHORIZED", error_type="InvalidAccessTokenError", message=f"JWT verification failed: {str(e)}")
+                raise InvalidAccessTokenError(status_code=401, error="UNAUTHORIZED", error_type="jwt.InvalidTokenError", message=f"JWT verification failed: {str(e)}")
             except InvalidAccessTokenError as e:
                 logger.warning(f"Invalid access token encountered")
                 raise e
@@ -75,10 +75,10 @@ class JwtTokenVerifier:
                 raise e
             except jwt.PyJWKClientError as e:
                 logger.error(f"JWT JWK client error: {str(e)}")
-                raise InvalidAccessTokenError(status_code=401, error="UNAUTHORIZED", error_type="InvalidAccessTokenError", message=f"JWK client error: {str(e)}")
+                raise InvalidAccessTokenError(status_code=401, error="UNAUTHORIZED", error_type="jwt.PyJWKClientError", message=f"JWK client error: {str(e)}")
             except Exception as e:
                 logger.error(f"Unexpected error during token verification: {str(e)}")
-                raise InvalidAccessTokenError(status_code=401, error="UNAUTHORIZED", error_type="InvalidAccessTokenError", message=f"Token verification failed: {str(e)}")
+                raise InvalidAccessTokenError(status_code=401, error="UNAUTHORIZED", error_type="Exception", message=f"Token verification failed: {str(e)}")
 
     async def _verify_signature_and_claims(self, token: str) -> dict[str, Any]:
         try:

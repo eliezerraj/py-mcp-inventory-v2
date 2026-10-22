@@ -16,7 +16,10 @@ class Settings:
         self.AUTHORIZATION_ISSUER = os.getenv("AUTHORIZATION_ISSUER")
         self.AUTHORIZATION_AUDIENCE = os.getenv("AUTHORIZATION_AUDIENCE")
         
-        self.METRICS_HOST = os.getenv("HOST")
+        self.MCP_PROTECTED_RESOURCE = os.getenv("MCP_PROTECTED_RESOURCE")
+        self.AUTHORIZATION_SERVER = os.getenv("AUTHORIZATION_SERVER")
+
+        self.METRICS_HOST = os.getenv("METRICS_HOST")
         self.METRICS_PORT = int(os.getenv("METRICS_PORT", 8601))
                     
         self.LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()

@@ -30,24 +30,12 @@ tracer = trace.get_tracer(__name__)
 logger = logging.getLogger(__name__)
 
 TRACING_EXCLUDED_PATHS = ["/metrics", "/health"]
-AUTHORIZATION_EXCLUDED_PATHS = ["/metrics", "/health", "/info"]
+AUTHORIZATION_EXCLUDED_PATHS = ["/metrics", "/health", "/info", "/.well-known/oauth-protected-resource"]
 
 #---------------------------------
 # Exception handler utility
 #---------------------------------
 def handle_auth_exception(exception: Exception, span, request_id: str, log_level: str = "warning") -> JSONResponse:
-    """
-    Unified exception handler for authentication errors.
-    
-    Args:
-        exception: The exception to handle (custom or generic)
-        span: OpenTelemetry span for setting attributes
-        request_id: Request ID for correlation
-        log_level: Log level to use ("warning" or "error")
-    
-    Returns:
-        JSONResponse with appropriate error response and status code
-    """
     # Determine status code and error response
     status_code = 401
     if hasattr(exception, 'status_code') and exception.status_code:
@@ -71,11 +59,16 @@ def handle_auth_exception(exception: Exception, span, request_id: str, log_level
     span.set_attribute("error.type", type(exception).__name__)
     span.set_attribute("http.status_code", status_code)
     
-    return JSONResponse(
+    response = JSONResponse(
         status_code=status_code,
         content=error_response,
-        headers={"x-request-id": request_id}
+        headers={"x-request-id": request_id,
+                 "WWW-Authenticate": f"Bearer resource_metadata={settings.MCP_PROTECTED_RESOURCE}/.well-known/oauth-protected-resource" }
     )
+    
+    logger.debug("Returning JSONResponse: %s, headers: %s", response.body.decode(), dict(response.headers))
+    
+    return response
     
 class RequestContextMiddleware(BaseHTTPMiddleware):
 
@@ -91,7 +84,6 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
         logger.info("Initializing RequestContextMiddleware SUCCESSFULLY")
 
     async def dispatch(self, request: Request, call_next):
-        
         # Step 1: Generate or retrieve request ID for tracing
         request_id = request.headers.get("x-request-id", str(uuid.uuid4())) 
         REQUEST_ID_CTX.set(request_id)
