@@ -21,6 +21,7 @@ from src.mcp_server.infrastructure.auth.token_verifier import JwtTokenVerifier
 from src.mcp_server.common.exceptions.auth_error import (
     InvalidAccessTokenError,
     MissingTokenError,
+    ForbiddenError,
 )
 
 #---------------------------------
@@ -36,7 +37,7 @@ AUTHORIZATION_EXCLUDED_PATHS = ["/metrics", "/health", "/info", "/.well-known/oa
 # Exception handler utility
 #---------------------------------
 def handle_auth_exception(exception: Exception, span, request_id: str, log_level: str = "warning") -> JSONResponse:
-    # Determine status code and error response
+    # Set default status code and override if exception has one
     status_code = 401
     if hasattr(exception, 'status_code') and exception.status_code:
         status_code = exception.status_code
@@ -66,7 +67,7 @@ def handle_auth_exception(exception: Exception, span, request_id: str, log_level
                  "WWW-Authenticate": f"Bearer resource_metadata={settings.MCP_PROTECTED_RESOURCE}/.well-known/oauth-protected-resource" }
     )
     
-    logger.debug("Returning JSONResponse: %s, headers: %s", response.body.decode(), dict(response.headers))
+    logger.warning("Returning JSONResponse: %s, headers: %s", response.body.decode(), dict(response.headers))
     
     return response
     
@@ -135,7 +136,9 @@ class RequestContextMiddleware(BaseHTTPMiddleware):
                         scopes=verified_identity.scopes,
                         claims=verified_identity.claims,
                     )
-                    
+                
+                except ForbiddenError as e:
+                    return handle_auth_exception(e, span, request_id, log_level="warning")
                 except InvalidAccessTokenError as e:
                     return handle_auth_exception(e, span, request_id, log_level="warning")
                 except MissingTokenError as e:

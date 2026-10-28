@@ -41,7 +41,7 @@ class JwtTokenVerifier:
         )
 
     async def verify_token(self, token: str) -> VerifiedIdentity:
-        logger.info(f"Starting token verification")
+        logger.info("Starting token verification")
         print("================= Starting token verification ================")
         print(token)
         print("==============================================================")
@@ -84,6 +84,7 @@ class JwtTokenVerifier:
                 raise InvalidAccessTokenError(status_code=401, error="UNAUTHORIZED", error_type="Exception", message=f"Token verification failed: {str(e)}")
 
     async def _verify_signature_and_claims(self, token: str) -> dict[str, Any]:
+        logger.info("Starting _verify_signature_and_claims")
         try:
             signing_key = await asyncio.to_thread(self.jwks_client.get_signing_key_from_jwt, token, )
             
@@ -110,24 +111,17 @@ class JwtTokenVerifier:
 
     @staticmethod
     def _extract_roles(claims: dict[str, Any]) -> set[str]:
-        roles: set[str] = set()
-        direct_roles = claims.get("roles", [])
-        if isinstance(direct_roles, list):
-            roles.update(
-                role for role in direct_roles
-                if isinstance(role, str)
-            )
+        raw_role = claims.get("role", "")
+        if isinstance(raw_role, str):
+            return set(raw_role.split())
 
-        realm_access = claims.get("realm_access", {})
-        if isinstance(realm_access, dict):
-            realm_roles = realm_access.get("roles", [])
-            if isinstance(realm_roles, list):
-                roles.update(
-                    role for role in realm_roles
-                    if isinstance(role, str)
-                )
+        if isinstance(raw_role, list):
+            return {
+                scope for scope in raw_role
+                if isinstance(scope, str)
+            }
 
-        return roles
+        return set()
 
     @staticmethod
     def _extract_scopes(claims: dict[str, Any]) -> set[str]:
