@@ -14,7 +14,7 @@ data:
   PORT: "7500"
   SESSION_TIMEOUT: "700"
   
-  ORDER_URL: "https://go-order-v2.architecture.xpto.io"
+  INVENTORY_URL: "https://go-inventory-v2.architecturedev.xpto.io"
 
   METRICS_HOST: "0.0.0.0"
   METRICS_PORT: "8500"
