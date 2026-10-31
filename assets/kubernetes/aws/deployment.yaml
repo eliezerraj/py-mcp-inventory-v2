@@ -26,7 +26,7 @@ spec:
         fsGroup: 3000
       containers:
       - name: *app-name
-        image: 908671954593.dkr.ecr.us-east-2.amazonaws.com/py-mcp-inventory-v2:latest
+        image: 992382474575.dkr.ecr.us-east-2.amazonaws.com/py-mcp-inventory-v2:latest
         envFrom:
         - configMapRef:
             name: cm-py-mcp-inventory-v2
