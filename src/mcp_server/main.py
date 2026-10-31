@@ -27,6 +27,13 @@ from src.mcp_server.presentation.prompt.inventory_prompt import (
     register_prompt,
 )
 
+from src.mcp_server.infrastructure.oauth.protect_resource import PROTECT_RESOURCE_METADATA
+
+from starlette.applications import Starlette
+from starlette.requests import Request
+from starlette.responses import JSONResponse
+from starlette.routing import Mount, Route
+
 setup_logger(settings.LOG_LEVEL, 
              settings.APP_NAME, 
              settings.OTEL_STDOUT_LOG_GROUP, 
@@ -39,7 +46,10 @@ setup_tracer(settings.APP_NAME,
              settings.OTEL_EXPORTER_OTLP_ENDPOINT)
 
 tracer = trace.get_tracer(__name__)
-    
+
+# -------------------------------------------------------------------
+# MCP lifespan
+# -------------------------------------------------------------------    
 @asynccontextmanager
 async def server_lifespan(app):
     logger.info("Initializing Enterprise MCP Server resources SUCCESSFULLY...")
@@ -72,7 +82,9 @@ async def server_lifespan(app):
     finally:
         logger.info("Server shutting down SUCCESSFULLY.")
 
-# Transport security settings for the MCP server
+# -------------------------------------------------------------------
+# Transport security
+# -------------------------------------------------------------------
 transport_security = TransportSecuritySettings(
     enable_dns_rebinding_protection=True,
     allowed_hosts=[
@@ -87,6 +99,24 @@ transport_security = TransportSecuritySettings(
     ],
 )
 
+# -------------------------------------------------------------------
+# OAuth Protected Resource Metadata
+# -------------------------------------------------------------------
+async def oauth_protected_resource_metadata(request: Request) -> JSONResponse:
+    logger.info("Handling /.well-known/oauth-protected-resource request")
+    return JSONResponse(
+        content=PROTECT_RESOURCE_METADATA,
+        headers={
+            "Cache-Control": "public, max-age=300",
+        },
+    )
+
+async def health(request: Request) -> JSONResponse:
+    logger.info("Handling /health request")
+    return JSONResponse(
+        content={"status": "ok"},
+    )
+    
 #---------------------------------
 # setup MCP server
 #---------------------------------
@@ -101,6 +131,45 @@ mcp_app.add_middleware(RequestContextMiddleware)
 mcp_app.add_middleware(PrometheusMiddleware)
 
 # ---------------------------------
+# OAuth application lifespan
+# ---------------------------------
+@asynccontextmanager
+async def application_lifespan(app: Starlette):
+    async with mcp.session_manager.run():
+        yield
+
+# Define routes
+routes = [
+    Route(
+        "/.well-known/oauth-protected-resource",
+        endpoint=oauth_protected_resource_metadata,
+        methods=["GET"],
+        name="oauth-protected-resource-metadata",
+    ),
+    Route(
+        "/health",
+        endpoint=health,
+        methods=["GET"],
+        name="health",
+    ),
+    Mount(
+        "/",
+        app=mcp_app,
+        name="mcp",
+    ),
+]
+
+app = Starlette(
+    routes=routes,
+    lifespan=application_lifespan,
+)
+
+# Log registered routes
+print("Registered routes:")
+for route in app.routes:
+    print(f"  - {route.path if hasattr(route, 'path') else route}")
+    
+# ---------------------------------
 # Prometheus server
 # ---------------------------------
 metrics_app = make_asgi_app()
@@ -112,7 +181,7 @@ def run_metrics_server():
         metrics_app,
         host=settings.METRICS_HOST,
         port=int(settings.METRICS_PORT),
-        log_level=settings.LOG_LEVEL,
+        log_level=settings.LOG_LEVEL.lower(),
     )
 
 # ---------------------------------
@@ -134,9 +203,11 @@ def run():
         # Start MCP server
         logger.info(f"SERVER: {settings.HOST}:{settings.PORT}")
         
-        uvicorn.run(mcp_app, 
+        uvicorn.run(app, 
                     host=settings.HOST, 
-                    port=int(settings.PORT))
+                    port=int(settings.PORT),
+                    log_level=settings.LOG_LEVEL.lower(),
+                    )
         
     except Exception as e:
         logger.error(f"Server encountered an error: {e}")

@@ -24,7 +24,6 @@ class InventoryResource:
     def __init__(self, mcp: "MCPServer", inventory_use_case: InventoryUseCase):
         self.mcp = mcp
         self.inventory_use_case = inventory_use_case
-        
         self.cedar_verifier = CedarVerifier()
         logger.info("InventoryResource initialized SUCCESSFULLY.")
 
