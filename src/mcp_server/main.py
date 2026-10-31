@@ -110,6 +110,12 @@ async def oauth_protected_resource_metadata(request: Request) -> JSONResponse:
             "Cache-Control": "public, max-age=300",
         },
     )
+
+async def health(request: Request) -> JSONResponse:
+    logger.info("Handling /health request")
+    return JSONResponse(
+        content={"status": "ok"},
+    )
     
 #---------------------------------
 # setup MCP server
@@ -139,6 +145,12 @@ routes = [
         endpoint=oauth_protected_resource_metadata,
         methods=["GET"],
         name="oauth-protected-resource-metadata",
+    ),
+    Route(
+        "/health",
+        endpoint=health,
+        methods=["GET"],
+        name="health",
     ),
     Mount(
         "/",
