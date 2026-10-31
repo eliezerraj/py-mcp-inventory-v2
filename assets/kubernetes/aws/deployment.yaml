@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: &app-name py-mcp-order-v2
+  name: &app-name py-mcp-inventory-v2
   namespace: test-a
   labels:
     app: *app-name
@@ -17,7 +17,7 @@ spec:
       labels:
         app: *app-name
     spec:
-      serviceAccountName: sa-py-mcp-order-v2
+      serviceAccountName: sa-py-mcp-inventory-v2
       enableServiceLinks: false
       volumes:
       securityContext:
@@ -26,10 +26,10 @@ spec:
         fsGroup: 3000
       containers:
       - name: *app-name
-        image: 908671954593.dkr.ecr.us-east-2.amazonaws.com/py-mcp-order-v2:latest
+        image: 908671954593.dkr.ecr.us-east-2.amazonaws.com/py-mcp-inventory-v2:latest
         envFrom:
         - configMapRef:
-            name: cm-py-mcp-order-v2
+            name: cm-py-mcp-inventory-v2
         resources:
            requests:
              cpu: 100m
@@ -48,15 +48,15 @@ spec:
             - ALL
         ports:
         - name: http
-          containerPort: 7501
+          containerPort: 7500
           protocol: TCP
         - name: metrics
-          containerPort: 8501
+          containerPort: 8500
           protocol: TCP
         readinessProbe:
             httpGet:
               path: /health
-              port: http
+              port: 7500
             initialDelaySeconds: 3
             periodSeconds: 30
             failureThreshold: 3
@@ -65,7 +65,7 @@ spec:
         livenessProbe:
             httpGet:
               path: /health
-              port: http
+              port: 7500
             initialDelaySeconds: 5
             periodSeconds: 30
             failureThreshold: 3
