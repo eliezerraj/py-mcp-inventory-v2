@@ -32,6 +32,27 @@ python -m app.main
 http://localhost:5000/mcp
 ```
 
+## Inspect MCP with the Python client
+
+With the project dependencies installed and the server running:
+
+```sh
+python assets/client/mcp_inspect_client.py
+# Optional: inspect another MCP endpoint
+python assets/client/mcp_inspect_client.py --url http://localhost:7500/mcp
+```
+
+The client uses Streamable HTTP and prints JSON containing the server information,
+all tools (including input schemas), resources, resource templates, and prompts.
+It follows pagination without invoking tools, reading resources, or rendering
+prompts. An empty list means no entries; `null` means the server does not
+advertise that capability. Connection and protocol errors exit nonzero with a
+traceback for debugging.
+
+If authentication is enabled, set the `MCP_ACCESS_TOKEN` environment variable to
+a valid bearer token before running the client. No token is needed when the
+server runs with `AUTHORIZATION_DRY_RUN=True`.
+
 ```
 mcp-enterprise-server/
 ├── README.md

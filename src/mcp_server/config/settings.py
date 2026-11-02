@@ -16,6 +16,18 @@ class Settings:
         self.AUTHORIZATION_ISSUER = os.getenv("AUTHORIZATION_ISSUER")
         self.AUTHORIZATION_AUDIENCE = os.getenv("AUTHORIZATION_AUDIENCE")
         
+        self.ENABLE_DNS_REBINDING_PROTECTION = os.getenv("ENABLE_DNS_REBINDING_PROTECTION", "false").lower() == "true"
+        self.ALLOWED_HOSTS = [
+            host.strip()
+            for host in os.getenv("ALLOWED_HOSTS").split(",")
+            if host.strip()
+        ]
+        self.ALLOWED_ORIGINS = [
+            origin.strip()
+            for origin in os.getenv("ALLOWED_ORIGINS").split(",")
+            if origin.strip()
+        ]
+        
         self.MCP_PROTECTED_RESOURCE = os.getenv("MCP_PROTECTED_RESOURCE")
         self.AUTHORIZATION_SERVER = os.getenv("AUTHORIZATION_SERVER")
 

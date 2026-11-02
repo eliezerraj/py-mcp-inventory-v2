@@ -24,6 +24,10 @@ data:
   AUTHORIZATION_ISSUER: "go-authorizer-v2"
   AUTHORIZATION_AUDIENCE: "py-mcp-inventory-v2"
 
+  ENABLE_DNS_REBINDING_PROTECTION: "False"
+  ALLOWED_HOSTS: "py-mcp-inventory-v2.architecturedev.xpto.io:*"
+  ALLOWED_ORIGINS: "https://py-mcp-inventory-v2.architecturedev.xpto.io:*"
+
   MCP_PROTECTED_RESOURCE: "py-mcp-inventory-v2.architecture.xpto.io"
   AUTHORIZATION_SERVER: "https://go-authorizer-v2.architecture.xpto.io"
 

@@ -1,30 +1,21 @@
-forbid(
-    principal,
-    action,
-    resource
-)
-when {
-    principal.client_id == "blocked-client"
-};
-
 // RESOURCE_CALL 
 
 permit(
     principal,
     action == Action::"call_resource",
-    resource == Resource::"get_order"
+    resource == Resource::"get_product"
 )
 when {
-    principal.scopes.contains("order:read")
+    principal.roles.contains("inventory-resource-role")
 };
 
 permit(
     principal,
     action == Action::"call_resource",
-    resource == Resource::"get_time_series_order_items"
+    resource == Resource::"get_inventory_service_info"
 )
 when {
-    principal.scopes.contains("order:history")
+    principal.roles.contains("order-resource-role")
 };
 
 // TOOL_CALLS
@@ -32,17 +23,26 @@ when {
 permit(
     principal,
     action == Action::"call_tool",
-    resource == Tool::"post_order"
+    resource == Tool::"patch_product"
 )
 when {
-    principal.scopes.contains("order:create")
+    principal.roles.contains("inventory-resource-role")
 };
 
 permit(
     principal,
     action == Action::"call_tool",
-    resource == Tool::"post_checkout"
+    resource == Tool::"post_product"
 )
 when {
-    principal.scopes.contains("checkout:create")
+    principal.roles.contains("inventory-resource-role")
+};
+
+permit(
+    principal,
+    action == Action::"call_tool",
+    resource == Tool::"put_product"
+)
+when {
+    principal.roles.contains("inventory-resource-role")
 };
