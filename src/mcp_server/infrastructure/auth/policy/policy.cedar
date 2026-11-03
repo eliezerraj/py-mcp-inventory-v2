@@ -15,7 +15,7 @@ permit(
     resource == Resource::"get_inventory_service_info"
 )
 when {
-    principal.roles.contains("order-resource-role")
+    principal.roles.contains("inventory-resource-role")
 };
 
 // TOOL_CALLS
@@ -26,7 +26,7 @@ permit(
     resource == Tool::"patch_product"
 )
 when {
-    principal.roles.contains("inventory-resource-role")
+    principal.roles.contains("inventory-tool-role")
 };
 
 permit(
@@ -35,7 +35,7 @@ permit(
     resource == Tool::"post_product"
 )
 when {
-    principal.roles.contains("inventory-resource-role")
+    principal.roles.contains("inventory-tool-role")
 };
 
 permit(
@@ -44,5 +44,5 @@ permit(
     resource == Tool::"put_product"
 )
 when {
-    principal.roles.contains("inventory-resource-role")
+    principal.roles.contains("inventory-tool-role")
 };

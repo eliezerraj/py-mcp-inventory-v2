@@ -74,24 +74,17 @@ def register_inventory_prompt(mcp: "MCPServer") -> None:
             f"Adjust the inventory for SKU {sku} by {pending} units accordingly."
         )
         
-    @mcp.prompt()
-    def inventory_update(sku: str, status: str, type: str, price: float, lead_time: int) -> str:
-        """ Start an inventory adjustment workflow for the given SKU, status, type, and price. """
+    @mcp.prompt()   
+    def price_patch(sku: str, currency: str, price: float) -> str:
+        """ Start a price adjustment workflow for the given SKU, currency, and price. """
 
         if not sku:
             raise ValueError("SKU must be provided.")
-        if type is None:
-            raise ValueError("Type must be provided.")
+        if currency is None:
+            raise ValueError("Currency must be provided.")
         if price is None:
             raise ValueError("Price must be provided.")
-        if status is None:
-            raise ValueError("Status must be provided.")
-        if lead_time is None:
-            raise ValueError("Lead time must be provided.")
 
         return (
-            f"Adjust the inventory for SKU {sku} with type {type}.\n"
-            f"Update the status {status} for SKU {sku}.\n"
-            f"The new lead time for SKU {sku} is {lead_time} days.\n"
-            f"Adjust the price for SKU {sku} to BRL {price:,.2f} and update the inventory accordingly."
+            f"Adjust the price for SKU {sku} to {currency} {price:,.2f} and update the inventory accordingly."
         )

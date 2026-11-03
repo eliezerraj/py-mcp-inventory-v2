@@ -61,10 +61,11 @@ class InventoryUseCase:
         logger.info(f"Updating product with payload: {payload}")
         with tracer.start_as_current_span("usecase.put_product"):
             try:
+                payload_data = payload.model_dump() if hasattr(payload, "model_dump") else payload
                 response = await self.http_adapter.request(
                     method="PUT",
-                    path=f"/v1/product/{payload.get('sku')}",
-                    payload=payload,
+                    path=f"/v1/product/{payload_data.get('sku')}",
+                    payload=payload_data,
                 )
             except Exception as e:
                 logger.error(f"Error updating product with payload {payload}: {e}")
@@ -85,4 +86,19 @@ class InventoryUseCase:
                 logger.error(f"Error patching product with payload {payload}: {e}")
                 raise e
 
-        return response   
+        return response
+    
+    async def patch_product_price(self, payload: dict):
+        logger.info(f"Patching product price with payload: {payload}")
+        with tracer.start_as_current_span("usecase.patch_product_price"):
+            try:
+                response = await self.http_adapter.request(
+                    method="PATCH",
+                    path=f"/v1/product/price/{payload.get('sku')}",
+                    payload=payload,
+                )
+            except Exception as e:
+                logger.error(f"Error patching product with payload {payload}: {e}")
+                raise e
+
+        return response 
