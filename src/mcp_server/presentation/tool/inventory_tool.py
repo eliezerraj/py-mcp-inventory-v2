@@ -20,6 +20,9 @@ from src.mcp_server.infrastructure.telemetry.metric import (
     ACTIVE_REQUESTS
 )
 
+#---------------------------------
+# Configure logging
+#---------------------------------
 logger = logging.getLogger(__name__)
 tracer = trace.get_tracer(__name__)
 
@@ -33,6 +36,9 @@ class InventoryTool:
     def register_inventory_tool(self):
         logger.info("Registering inventory tool SUCCESSFULLY.")
 
+        #---------------------------------
+        # post_product
+        #---------------------------------  
         @self.mcp.tool()
         async def post_product(payload: ProductPayload) -> ProductResponse | dict:
             """
@@ -89,6 +95,9 @@ class InventoryTool:
                     "product": product_response.model_dump(exclude_none=True),
                 }   
 
+        #---------------------------------
+        # patch_product_inventory
+        #---------------------------------  
         @self.mcp.tool()
         async def patch_product_inventory(payload: PatchInventoryPayload) -> ProductResponse | dict:
             """
@@ -135,8 +144,11 @@ class InventoryTool:
                 return {
                     "response": response.get("response") if isinstance(response, dict) else None,
                     "product": product_response.model_dump(exclude_none=True),
-                }  
-            
+                }
+                
+        #---------------------------------
+        # patch_product_price
+        #---------------------------------
         @self.mcp.tool()
         async def patch_product_price(payload: PatchPricePayload) -> ProductResponse | dict:
             """

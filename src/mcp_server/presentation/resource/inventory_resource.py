@@ -15,6 +15,9 @@ from src.mcp_server.infrastructure.telemetry.metric import (
     ACTIVE_REQUESTS
 )
 
+#---------------------------------
+# Configure logging
+#---------------------------------
 logger = logging.getLogger(__name__)
 tracer = trace.get_tracer(__name__)
 
@@ -38,7 +41,7 @@ class InventoryResource:
             logger.info("Fetching server information.")
             
             return {"status": settings.__dict__}
-        
+          
         @self.mcp.resource("inventory_service_info://")
         async def get_inventory_service_info():
             """
@@ -66,7 +69,10 @@ class InventoryResource:
                     ACTIVE_REQUESTS.dec()
 
                 return response
-        
+
+        #---------------------------------
+        # get_product
+        #---------------------------------        
         @self.mcp.resource("product://{sku}")
         async def get_product(sku: str) -> ProductResponse | dict:
             """
@@ -88,7 +94,8 @@ class InventoryResource:
                 
                 try:
                     response = await self.inventory_use_case.get_product(sku)
-                    
+                    TOOL_CALLS.labels(tool="product://{sku}").inc()
+                                        
                     product_data = (
                         response.get("product")
                         if isinstance(response, dict) and "product" in response
@@ -102,7 +109,7 @@ class InventoryResource:
                         type=product_data.get("type") if isinstance(product_data, dict) else None,
                         lead_time=product_data.get("lead_time") if isinstance(product_data, dict) else None
                     )
-                    TOOL_CALLS.labels(tool="product://{sku}").inc()
+
                 except AppError as e:
                     logger.error(f"Error AppError fetching product for sku {sku}: {e}")
                     return e.to_dict() 
@@ -118,7 +125,10 @@ class InventoryResource:
                     "response": response.get("response") if isinstance(response, dict) else None,
                     "product": product_response.model_dump(exclude_none=True),
                 }    
- 
+
+        #---------------------------------
+        # get_product_price
+        #---------------------------------     
         @self.mcp.resource("product://{sku}/price")
         async def get_product_price(sku: str) -> ProductResponse | dict:
             """
@@ -172,6 +182,9 @@ class InventoryResource:
                     "product": product_response.model_dump(exclude_none=True),
                 }    
 
+        #---------------------------------
+        # get_product_inventory
+        #---------------------------------     
         @self.mcp.resource("product://{sku}/inventory")
         async def get_product_inventory(sku: str) -> ProductResponse | dict:
             """
