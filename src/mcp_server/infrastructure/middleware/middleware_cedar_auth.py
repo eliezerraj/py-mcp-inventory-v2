@@ -6,10 +6,10 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from src.mcp_server.infrastructure.auth.cedar_verifier import CedarVerifier
-from src.mcp_server.common.exceptions.auth_error import ForbiddenError
+from src.mcp_server.infrastructure.security.cedar_verifier import CedarVerifier
+from src.mcp_server.domain.exceptions import ForbiddenError
 from src.mcp_server.config.settings import settings
-from src.mcp_server.infrastructure.context.request_context import get_security_context
+from src.mcp_server.domain.model.context  import get_security_context
 
 #---------------------------------
 # Configure logging
@@ -64,7 +64,6 @@ class CedarAuthorizationMiddleware(BaseHTTPMiddleware):
             
             # Check if this is a resource call (method = "resources/read")
             print("---------------------------3------------------------")
-            print(f"payload.get: {payload.get('method')}")
             
             if payload.get("method") == "resources/read":
                 resource_uri = payload.get("params", {}).get("uri", "")
@@ -166,8 +165,8 @@ class CedarAuthorizationMiddleware(BaseHTTPMiddleware):
             else:
                 return "get_time_series_order_items", {"data": path_part}
         
-        elif uri.startswith("order_service_info://"):
-            return "get_order_service_info", {}
+        elif uri.startswith("get_inventory_service_info://"):
+            return "get_inventory_service_info", {}
         
         elif uri.startswith("mcp_info://"):
             return "mcp_info", {}

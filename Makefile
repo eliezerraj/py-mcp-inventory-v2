@@ -17,7 +17,7 @@ export AUTHORIZATION_JWKS_URL=http://localhost:7100/v1/.well-known/jwks.json
 export AUTHORIZATION_ISSUER=go-authorizer-v2
 export AUTHORIZATION_AUDIENCE=py-mcp-inventory-v2
 
-export ENABLE_DNS_REBINDING_PROTECTION=False
+export ENABLE_DNS_REBINDING_PROTECTION=True
 export ALLOWED_HOSTS=localhost:*,127.0.0.1:*,py-mcp-inventory-v2:*
 export ALLOWED_ORIGINS=http://localhost:*,http://127.0.0.1:*,http://py-mcp-inventory-v2:*
 

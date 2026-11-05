@@ -3,8 +3,8 @@ import time
 
 from opentelemetry import trace
 
-from src.mcp_server.domain.dto.context import SecurityContext
-from src.mcp_server.domain.dto.product import (
+from src.mcp_server.domain.model.context import SecurityContext
+from src.mcp_server.domain.model.product import (
     ProductPayload,
     PatchInventoryPayload,
     ProductResponse,
@@ -13,7 +13,7 @@ from src.mcp_server.domain.dto.product import (
 )
 from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
 
-from src.mcp_server.infrastructure.telemetry.metric import (
+from src.mcp_server.infrastructure.observability.metric import (
     TOOL_CALLS,
     TOOL_DURATION, 
     TOOL_ERRORS, 

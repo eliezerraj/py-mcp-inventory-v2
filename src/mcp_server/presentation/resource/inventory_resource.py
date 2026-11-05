@@ -3,12 +3,12 @@ import time
 
 from opentelemetry import trace
 
-from src.mcp_server.common.exceptions.app_error import AppError
+from src.mcp_server.domain.external.error_response import AppError
 from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
 from src.mcp_server.config.settings import settings
-from src.mcp_server.domain.dto.product import ProductResponse
+from src.mcp_server.domain.model.product import ProductResponse
 
-from src.mcp_server.infrastructure.telemetry.metric import (
+from src.mcp_server.infrastructure.observability.metric import (
     TOOL_CALLS,
     TOOL_DURATION, 
     TOOL_ERRORS, 

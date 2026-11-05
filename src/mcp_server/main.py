@@ -12,12 +12,12 @@ from prometheus_client import make_asgi_app
 
 from src.mcp_server.infrastructure.adapter.http import HttpAdapter
 from src.mcp_server.presentation.resource.inventory_resource import InventoryResource
-from src.mcp_server.infrastructure.middleware.middleware import RequestContextMiddleware
+from src.mcp_server.infrastructure.middleware.middleware_auth import RequestContextMiddleware
 from src.mcp_server.infrastructure.middleware.middleware_metric import PrometheusMiddleware
-from src.mcp_server.infrastructure.telemetry.tracer import setup_tracer
+from src.mcp_server.infrastructure.observability.tracer import setup_tracer
 from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
 from src.mcp_server.presentation.tool.inventory_tool import InventoryTool
-from src.mcp_server.config.logger import setup_logger
+from src.mcp_server.infrastructure.observability.logger import setup_logger
 from src.mcp_server.config.settings import settings
 from src.mcp_server.infrastructure.middleware.middleware_cedar_auth import CedarAuthorizationMiddleware
 
