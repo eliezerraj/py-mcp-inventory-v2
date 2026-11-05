@@ -10,7 +10,7 @@ from jwt import PyJWKClient
 
 from opentelemetry import trace
 
-from src.mcp_server.domain.model.model import VerifiedIdentity
+from src.mcp_server.domain.model.context import VerifiedIdentity
 
 from src.mcp_server.domain.exceptions import (
     InvalidAccessTokenError,
