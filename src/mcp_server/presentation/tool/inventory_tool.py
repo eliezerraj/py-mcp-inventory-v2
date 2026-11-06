@@ -3,13 +3,11 @@ import time
 
 from opentelemetry import trace
 
-from src.mcp_server.domain.model.context import SecurityContext
 from src.mcp_server.domain.model.product import (
     ProductPayload,
     PatchInventoryPayload,
     ProductResponse,
     PatchPricePayload,
-    Inventory,
 )
 from src.mcp_server.domain.usecase.inventory_usecase import InventoryUseCase
 
