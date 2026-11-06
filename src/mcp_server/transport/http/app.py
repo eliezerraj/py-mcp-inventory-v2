@@ -25,7 +25,6 @@ from src.mcp_server.presentation.tool.inventory_tool import InventoryTool
 
 from src.mcp_server.config.settings import settings
 
-
 from mcp.server.transport_security import TransportSecuritySettings
 from mcp.server.mcpserver import MCPServer
 
