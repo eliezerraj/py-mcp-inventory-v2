@@ -4,15 +4,13 @@ import jwt
 
 from typing import Any
 
-from datetime import datetime
-
 from jwt import PyJWKClient
 
 from opentelemetry import trace
 
-from src.mcp_server.domain.dto.model import VerifiedIdentity
+from src.mcp_server.domain.model.context import VerifiedIdentity
 
-from src.mcp_server.common.exceptions.auth_error import (
+from src.mcp_server.domain.exceptions import (
     InvalidAccessTokenError,
     MissingTokenError,
 )

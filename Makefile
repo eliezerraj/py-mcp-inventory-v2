@@ -12,10 +12,14 @@ export INVENTORY_URL=http://localhost:7000
 export METRICS_HOST=127.0.0.1
 export METRICS_PORT=8500
 
-export AUTHORIZATION_DRY_RUN=False
+export AUTHORIZATION_DRY_RUN=True
 export AUTHORIZATION_JWKS_URL=http://localhost:7100/v1/.well-known/jwks.json
 export AUTHORIZATION_ISSUER=go-authorizer-v2
 export AUTHORIZATION_AUDIENCE=py-mcp-inventory-v2
+
+export ENABLE_DNS_REBINDING_PROTECTION=True
+export ALLOWED_HOSTS=localhost:*,127.0.0.1:*,py-mcp-inventory-v2:*
+export ALLOWED_ORIGINS=http://localhost:*,http://127.0.0.1:*,http://py-mcp-inventory-v2:*
 
 export MCP_PROTECTED_RESOURCE=http://localhost:7500
 export AUTHORIZATION_SERVER=http://localhost:7100
@@ -45,6 +49,14 @@ env:
 	@echo "INVENTORY_URL=$(INVENTORY_URL)"
 	@echo "METRICS_HOST=$(METRICS_HOST)"
 	@echo "METRICS_PORT=$(METRICS_PORT)"
+	@echo "ENABLE_DNS_REBINDING_PROTECTION=$(ENABLE_DNS_REBINDING_PROTECTION)"
+	@echo "ALLOWED_HOSTS=$(ALLOWED_HOSTS)"
+	@echo "ALLOWED_ORIGINS=$(ALLOWED_ORIGINS)"
+	@echo "MCP_PROTECTED_RESOURCE=$(MCP_PROTECTED_RESOURCE)"
+	@echo "AUTHORIZATION_SERVER=$(AUTHORIZATION_SERVER)"
+	@echo "LOG_GROUP=$(LOG_GROUP)"
+	@echo "OTEL_EXPORTER_OTLP_ENDPOINT=$(OTEL_EXPORTER_OTLP_ENDPOINT)"
+	@echo "OTEL_STDOUT_LOG_GROUP=$(OTEL_STDOUT_LOG_GROUP)"
 activate:
 	@echo "Activate venv..."
 	@bash -c "source ../../.venv/bin/activate"

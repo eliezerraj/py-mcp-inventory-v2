@@ -1,4 +1,4 @@
-from src.mcp_server.common.exceptions.app_error import AppError
+from src.mcp_server.domain.external.error_response import AppError
 
 class InvalidAccessTokenError(AppError):
     pass
