@@ -33,22 +33,15 @@ class InventoryResource:
         
         @self.mcp.resource("mcp_info://")
         def mcp_info():
-            """
-            Provides general information about the mcp server.
+            """Provides general information about the mcp server. Use this tool when the user asks for server details or status."""
             
-            Use this tool when the user asks for server details or status.
-            """
             logger.info("Fetching server information.")
             
             return {"status": settings.__dict__}
           
         @self.mcp.resource("inventory_service_info://")
         async def get_inventory_service_info():
-            """
-            Retrieves general inventory service information.
-            
-            Use this resource to get an overview of the inventory service.
-            """
+            """Retrieves general inventory service information. Use this resource to get an overview of the inventory service."""
             logger.info(f"Fetching inventory service info")
                         
             with tracer.start_as_current_span("resource.get_inventory_service_info"):
@@ -75,8 +68,7 @@ class InventoryResource:
         #---------------------------------        
         @self.mcp.resource("product://{sku}")
         async def get_product(sku: str) -> ProductResponse | dict:
-            """
-            Retrieve product data for a specific SKU.
+            """Retrieve product data for a specific SKU.
 
             Resource URI:
                 product://{sku}
@@ -84,8 +76,7 @@ class InventoryResource:
             Example:
                 product://sku-102
 
-            Returns only the product SKU, type, name, lead time.
-            """
+            Returns only the product SKU, type, name, lead time."""
             logger.info(f"Fetching product data for sku: {sku}")
                         
             with tracer.start_as_current_span("resource.get_product"):
@@ -131,8 +122,7 @@ class InventoryResource:
         #---------------------------------     
         @self.mcp.resource("product://{sku}/price")
         async def get_product_price(sku: str) -> ProductResponse | dict:
-            """
-            Retrieve product price for a specific SKU.
+            """Retrieve product price for a specific SKU.
 
             Resource URI:
                 product://{sku}/price
@@ -140,8 +130,8 @@ class InventoryResource:
             Example:
                 product://sku-102/price
 
-            Returns only the product SKU, type, name, status and price.
-            """
+            Returns only the product SKU, type, name, status and price."""
+            
             logger.info(f"Fetching product price for sku: {sku}")
                         
             with tracer.start_as_current_span("resource.get_product_price"):
@@ -187,8 +177,7 @@ class InventoryResource:
         #---------------------------------     
         @self.mcp.resource("product://{sku}/inventory")
         async def get_product_inventory(sku: str) -> ProductResponse | dict:
-            """
-            Retrieve product inventory for a specific SKU.
+            """Retrieve product inventory for a specific SKU.
 
             Resource URI:
                 product://{sku}/inventory
@@ -196,8 +185,8 @@ class InventoryResource:
             Example:
                 product://sku-102/inventory
 
-            Returns only the product SKU, type, name, status and inventory.
-            """
+            Returns only the product SKU, type, name, status and inventory."""
+            
             logger.info(f"Fetching product inventory for sku: {sku}")
                         
             with tracer.start_as_current_span("resource.get_product_inventory"):
