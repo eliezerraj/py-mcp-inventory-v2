@@ -121,6 +121,7 @@ class ProductResponse(BaseModel):
         default=None,
         description="Product price details"
     )
+    
     inventory: Optional[Inventory] = Field(
         default=None,
         description="Inventory details for the product"

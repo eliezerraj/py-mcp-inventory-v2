@@ -1,0 +1,77 @@
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: tg-py-mcp-inventory-v2
+  namespace: test-a
+  labels:
+    app: tg-py-mcp-inventory-v2
+spec:
+  targetReference:  
+    name: svc-py-mcp-inventory-v2
+  defaultConfiguration:
+    targetGroupName: tg-py-mcp-inventory-v2
+    targetType: ip
+    healthCheckConfig:
+      healthCheckProtocol: HTTP
+      healthCheckPath: /health
+      healthCheckPort: "traffic-port" 
+      healthCheckInterval: 15
+      healthyThresholdCount: 2 
+      unhealthyThresholdCount: 2
+      matcher:
+        httpCode: "200-399"
+  routeConfigurations:
+    - routeIdentifier:
+        kind: HTTPRoute
+        name: py-mcp-inventory-v2-route
+        namespace: test-a
+      targetGroupProps:
+        healthCheckConfig:
+          healthCheckProtocol: HTTP
+          healthCheckPath: /health
+          healthCheckPort: "traffic-port" 
+          healthCheckInterval: 15
+          healthyThresholdCount: 2 
+          unhealthyThresholdCount: 2
+          matcher:
+            httpCode: "200-399"
+
+---
+
+apiVersion: gateway.k8s.aws/v1beta1
+kind: TargetGroupConfiguration
+metadata:
+  name: tg-py-mcp-inventory-v2-metrics
+  namespace: test-a
+  labels:
+    app: tg-py-mcp-inventory-v2-metrics
+spec:
+  targetReference:  
+    name: svc-py-mcp-inventory-v2-metrics
+  defaultConfiguration:
+    targetGroupName: tg-py-mcp-inventory-v2-metrics
+    targetType: ip
+    healthCheckConfig:
+      healthCheckProtocol: HTTP
+      healthCheckPath: /metrics
+      healthCheckPort: "traffic-port" 
+      healthCheckInterval: 15
+      healthyThresholdCount: 2 
+      unhealthyThresholdCount: 2
+      matcher:
+        httpCode: "200-399"
+  routeConfigurations:
+    - routeIdentifier:
+        kind: HTTPRoute
+        name: py-mcp-inventory-v2-metrics-route
+        namespace: test-a
+      targetGroupProps:
+        healthCheckConfig:
+          healthCheckProtocol: HTTP
+          healthCheckPath: /metrics
+          healthCheckPort: "traffic-port"
+          healthCheckInterval: 15
+          healthyThresholdCount: 2 
+          unhealthyThresholdCount: 2
+          matcher:
+            httpCode: "200-399"

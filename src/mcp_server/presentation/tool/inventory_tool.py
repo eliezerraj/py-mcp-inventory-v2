@@ -39,11 +39,9 @@ class InventoryTool:
         #---------------------------------  
         @self.mcp.tool()
         async def post_product(payload: ProductPayload) -> ProductResponse | dict:
-            """
-            Creates a new product.
+            """Creates a new product.
 
-            Use this tool when the user wants to create a product
-            or add product information.
+            Use this tool when the user wants to create a product or add product information.
 
             The product must contain:
             - SKU
@@ -53,7 +51,8 @@ class InventoryTool:
             - lead time
             - price with currency and amount
             - initial inventory quantity
-            """
+            Creates a new product with the specified details."""
+            
             logger.info(f"Creating product: {payload}")
                     
             with tracer.start_as_current_span("tool.post_product"): 
@@ -98,8 +97,7 @@ class InventoryTool:
         #---------------------------------  
         @self.mcp.tool()
         async def patch_product_inventory(payload: PatchInventoryPayload) -> ProductResponse | dict:
-            """
-            Updates an inventory.
+            """Updates an inventory.
 
             Use this tool when the user wants to update the inventory or add inventory information.
 
@@ -107,8 +105,8 @@ class InventoryTool:
             - SKU
             - inventory quantity
             - inventory sold
-            - inventory pending
-            """
+            - inventory pending"""
+            
             logger.info(f"Patching product with payload: {payload}")
                     
             with tracer.start_as_current_span("tool.patch_product_inventory"):
@@ -149,15 +147,14 @@ class InventoryTool:
         #---------------------------------
         @self.mcp.tool()
         async def patch_product_price(payload: PatchPricePayload) -> ProductResponse | dict:
-            """
-            Updates a product prices.
+            """Updates a product prices.
 
             Use this tool when the user wants to update product prices
 
             The product must contain:
             - SKU
-            - price with currency and amount
-            """
+            - price with currency and amount"""
+            
             logger.info(f"Updating product with payload: {payload}")
                             
             with tracer.start_as_current_span("tool.patch_product_price"):
