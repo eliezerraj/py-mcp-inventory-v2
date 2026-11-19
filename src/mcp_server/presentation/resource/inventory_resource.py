@@ -174,7 +174,7 @@ class InventoryResource:
 
         #---------------------------------
         # get_product_inventory
-        #---------------------------------     
+        #---------------------------------
         @self.mcp.resource("product://{sku}/inventory")
         async def get_product_inventory(sku: str) -> ProductResponse | dict:
             """Retrieve product inventory for a specific SKU.
@@ -208,6 +208,7 @@ class InventoryResource:
                         name=product_data.get("name") if isinstance(product_data, dict) else None,
                         type=product_data.get("type") if isinstance(product_data, dict) else None,
                         status=product_data.get("status") if isinstance(product_data, dict) else None,
+                        price=product_data.get("price") if isinstance(product_data, dict) else None,
                         inventory=product_data.get("inventory") if isinstance(product_data, dict) else None,
                     )
                                          
